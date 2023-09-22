@@ -41,8 +41,9 @@ pipeline {
         stage('Bulid Docker') {
           steps {
             echo 'Bulid Docker'
-            sh 'docker build -t cicd-test:latest .'
-
+            script{
+                dockerImage = docker.build("cicd-test:latest", "-f Dockerfile .")
+            }
           }
           post {
             failure {
@@ -55,7 +56,9 @@ pipeline {
         stage('Docker Run') {
             steps {
                 echo 'Pull Docker Image & Docker Image Run'
-                sh 'docker run -d -p 5000:80 cicd-test:latest'
+                script{
+                    docker.image('cicd-test:latest').withRun('-d -p 5000:80')
+                }
             }
         }
     }
