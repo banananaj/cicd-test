@@ -41,9 +41,8 @@ pipeline {
         stage('Bulid Docker') {
           steps {
             echo 'Bulid Docker'
-            script {
-                sh 'docker build -t cicd-test:latest .'
-            }
+            sh 'docker build -t cicd-test:latest .'
+
           }
           post {
             failure {
