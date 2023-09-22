@@ -42,7 +42,7 @@ pipeline {
           steps {
             echo 'Bulid Docker'
             script {
-                def dockerImage = docker.build('cicd-test:latest','-f Dockerfile .')
+                sh 'docker build -t cicd-test:latest .'
             }
           }
           post {
@@ -52,29 +52,11 @@ pipeline {
           }
         }
 
-        stage('Push Docker') {
-          steps {
-            echo 'Push Docker'
-            script {
-                docker.withRegistry( '', registryCredential)
-                dockerImage.push()
-            }
-          }
-          post {
-            failure {
-              error 'pipline stop at push docker stage'
-            }
-          }
-        }
 
         stage('Docker Run') {
             steps {
                 echo 'Pull Docker Image & Docker Image Run'
-                sshagent (credentials: ['SSH Credential ID -> ssh']) {
-                    sh "ssh -o StrictHostKeyChecking=no [Spring Boot Server username]@[Spring Boot Server IP 주소] 'docker pull [도커이미지 이름]'"
-                    sh "ssh -o StrictHostKeyChecking=no [Spring Boot Server username]@[Spring Boot Server IP 주소] 'docker ps -q --filter name=[컨테이너 이름] | grep -q . && docker rm -f \$(docker ps -aq --filter name=[컨테이너 이름])'"
-                    sh "ssh -o StrictHostKeyChecking=no [Spring Boot Server username]@[Spring Boot Server IP 주소] 'docker run -d --name [컨테이너 이름] -p 8080:8080 [도커이미지 이름]'"
-                }
+                sh 'docker run -d -p 5000:80 cicd-test:latest'
             }
         }
     }
