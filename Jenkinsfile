@@ -13,15 +13,8 @@ pipeline {
             git url: 'https://github.com/banananaj/cicd-test.git',
               branch: 'main'
             }
-            post {
-             success {
-               echo 'Successfully Cloned Repository'
-             }
-           	 failure {
-               error 'This pipeline stops here...'
-             }
-          }
         }
+
 
         stage('Bulid Gradle') {
           steps {
@@ -31,11 +24,6 @@ pipeline {
                 sh './gradlew clean build'
             }
           }
-          post {
-            failure {
-              error 'This pipeline stops here...'
-            }
-          }
         }
 
         stage('Bulid Docker') {
@@ -43,11 +31,6 @@ pipeline {
             echo 'Bulid Docker'
             script{
                 dockerImage = docker.build("cicd-test:latest", "-f Dockerfile .")
-            }
-          }
-          post {
-            failure {
-              error 'pipline stop at build docker stage'
             }
           }
         }
