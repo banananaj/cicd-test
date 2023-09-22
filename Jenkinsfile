@@ -42,12 +42,12 @@ pipeline {
           steps {
             echo 'Bulid Docker'
             script {
-                dockerImage = docker.build imagename
+                def dockerImage = docker.build('cicd-test:latest','-f Dockerfile .')
             }
           }
           post {
             failure {
-              error 'This pipeline stops here...'
+              error 'pipline stop at build docker stage'
             }
           }
         }
@@ -56,14 +56,13 @@ pipeline {
           steps {
             echo 'Push Docker'
             script {
-                docker.withRegistry( '', registryCredential) {
-                    dockerImage.push()
-                }
+                docker.withRegistry( '', registryCredential)
+                dockerImage.push()
             }
           }
           post {
             failure {
-              error 'This pipeline stops here...'
+              error 'pipline stop at push docker stage'
             }
           }
         }
