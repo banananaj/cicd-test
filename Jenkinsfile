@@ -1,12 +1,25 @@
 pipeline {
     agent any
-
+    environment{
+        
+    }
     stages {
-        stage('Hello') {
+        stage('github clone') {
+            agent any
             steps {
-                echo 'Hello World'
+                git branch: 'main',
+                url: 'https://github.com/banananaj/cicd-test'
+            }
+            post {
+                failure{
+                    error "Fail Cloned Repository"
+                }
             }
         }
+
+
+
+
     }
 }
 
